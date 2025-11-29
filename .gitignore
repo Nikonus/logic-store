@@ -1,0 +1,2 @@
+# Ignore generator script so Git stops deleting it
+scripts/
