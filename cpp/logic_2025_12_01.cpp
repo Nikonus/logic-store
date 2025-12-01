@@ -1,50 +1,66 @@
 ```cpp
 #include <iostream>
-#include <cmath>   // For std::sqrt
-#include <cstdlib> // For std::llabs (long long absolute value)
 
-long long logic(long long n) {
-    long long original_n = n;
-    long long abs_n = std::llabs(n);
+long long logic(int n) {
+    long long result = 0;
+    int parity_switch = 1; // Alternates between adding and subtracting transformed parts
 
-    long long transformed_val = 0;
-    long long temp_n = abs_n;
-
-    if (temp_n == 0) {
+    if (n == 0) {
         return 0;
     }
 
-    while (temp_n > 0) {
-        int digit = temp_n % 10;
+    bool is_negative = (n < 0);
+    long long current_n_abs = static_cast<long long>(n); // Safely convert to long long
+    if (is_negative) {
+        current_n_abs = -current_n_abs; // Obtain absolute value, handles INT_MIN correctly
+    }
+
+    while (current_n_abs > 0) {
+        int digit = current_n_abs % 10;
+        long long transformed_part;
+
         if (digit % 2 == 0) {
-            transformed_val += static_cast<long long>(digit) * digit;
+            transformed_part = (long long)digit * digit; // Square even digits
         } else {
-            transformed_val += static_cast<long long>(digit) * digit * digit;
+            transformed_part = (long long)digit * digit * digit; // Cube odd digits
         }
-        temp_n /= 10;
+
+        if (parity_switch == 1) {
+            result += transformed_part;
+        } else {
+            result -= transformed_part;
+        }
+
+        parity_switch *= -1; // Flip the switch for the next digit
+        current_n_abs /= 10;
     }
 
-    long long root = static_cast<long long>(std::sqrt(static_cast<double>(abs_n)));
-    bool is_perfect_square = (root * root == abs_n);
-
-    long long final_result;
-    if (is_perfect_square) {
-        final_result = transformed_val ^ abs_n;
-    } else {
-        final_result = transformed_val + abs_n;
+    if (is_negative) {
+        return -result; // Apply original sign to the final result
     }
-
-    if (original_n < 0 && final_result != 0) {
-        return -final_result;
-    }
-    return final_result;
+    return result;
 }
 
 int main() {
-    long long input_n;
-    std::cin >> input_n;
-    long long output = logic(input_n);
-    std::cout << output << std::endl;
+    int test_values[] = {
+        0,
+        1,
+        12,
+        123,
+        4567,
+        98765,
+        -1,
+        -12,
+        -123,
+        20202,
+        1999999999, // Near INT_MAX
+        -2147483648 // INT_MIN
+    };
+
+    for (int val : test_values) {
+        std::cout << val << " -> " << logic(val) << std::endl;
+    }
+
     return 0;
 }
 ```
