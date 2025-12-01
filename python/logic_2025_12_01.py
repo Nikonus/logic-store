@@ -1,38 +1,40 @@
 ```python
+def _get_prime_factors(num):
+    factors = []
+    d = 2
+    temp = num
+    while d * d <= temp:
+        while temp % d == 0:
+            factors.append(d)
+            temp //= d
+        d += 1
+    if temp > 1:
+        factors.append(temp)
+    return factors
+
 def logic(n):
+    if n < 0:
+        return -logic(abs(n))
     if n == 0:
         return 0
+    if n == 1:
+        return 1
 
-    abs_n = abs(n)
-    s_abs_n = str(abs_n)
+    factors = _get_prime_factors(n)
+    sum_of_factors = sum(factors)
+    
+    return n ** sum_of_factors
 
-    sum_powers = sum(int(digit) ** (i + 1) for i, digit in enumerate(s_abs_n))
-
-    shifted_abs_n = abs_n * (abs_n % 10 + 1)
-
-    set_bits = bin(abs_n).count('1')
-
-    intermediate_result = (sum_powers + shifted_abs_n)
-
-    if n < 0:
-        final_transform = intermediate_result - (set_bits * abs_n % 7)
-    else:
-        final_transform = intermediate_result * (set_bits + abs_n % 3)
-
-    return final_transform
+def main():
+    test_numbers = [
+        -10, -5, -2, -1, 0, 1, 2, 3, 4, 5, 
+        6, 7, 8, 9, 10, 12, 13, 15, 17, 20, 
+        25, 30, 42, 100, 121, 200, 1000
+    ]
+    for num in test_numbers:
+        transformed_value = logic(num)
+        print(f"{num} -> {transformed_value}")
 
 if __name__ == "__main__":
-    print(f"logic(0) = {logic(0)}")
-    print(f"logic(1) = {logic(1)}")
-    print(f"logic(5) = {logic(5)}")
-    print(f"logic(10) = {logic(10)}")
-    print(f"logic(123) = {logic(123)}")
-    print(f"logic(-1) = {logic(-1)}")
-    print(f"logic(-5) = {logic(-5)}")
-    print(f"logic(-10) = {logic(-10)}")
-    print(f"logic(-123) = {logic(-123)}")
-    print(f"logic(7) = {logic(7)}")
-    print(f"logic(-7) = {logic(-7)}")
-    print(f"logic(42) = {logic(42)}")
-    print(f"logic(-100) = {logic(-100)}")
+    main()
 ```
