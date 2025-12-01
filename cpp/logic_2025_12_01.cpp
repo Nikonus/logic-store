@@ -1,63 +1,51 @@
 ```cpp
 #include <iostream>
+#include <string>
+#include <vector>
+#include <cmath> // For std::abs
 
-long long logic(int n) {
-    long long result = 0;
-    int parity_switch = 1; // Alternates between adding and subtracting transformed parts
-
+long long logic(long long n) {
     if (n == 0) {
         return 0;
     }
 
-    bool is_negative = (n < 0);
-    long long current_n_abs = static_cast<long long>(n); // Safely convert to long long
-    if (is_negative) {
-        current_n_abs = -current_n_abs; // Obtain absolute value, handles INT_MIN correctly
+    bool is_negative = n < 0;
+    long long abs_n = std::abs(n);
+
+    std::string s = std::to_string(abs_n);
+    std::string transformed_s = "";
+    int position = 0; // 0-indexed position from left (most significant digit)
+
+    for (char digit_char : s) {
+        int digit = digit_char - '0';
+        // Transformation: each digit is shifted by (its position modulo 3), then the result is taken modulo 10.
+        int transformed_digit = (digit + (position % 3)) % 10;
+        transformed_s += std::to_string(transformed_digit);
+        position++;
     }
 
-    while (current_n_abs > 0) {
-        int digit = current_n_abs % 10;
-        long long transformed_part;
+    long long transformed_val = std::stoll(transformed_s);
 
-        if (digit % 2 == 0) {
-            transformed_part = (long long)digit * digit; // Square even digits
-        } else {
-            transformed_part = (long long)digit * digit * digit; // Cube odd digits
-        }
-
-        if (parity_switch == 1) {
-            result += transformed_part;
-        } else {
-            result -= transformed_part;
-        }
-
-        parity_switch *= -1; // Flip the switch for the next digit
-        current_n_abs /= 10;
-    }
-
-    if (is_negative) {
-        return -result; // Apply original sign to the final result
-    }
-    return result;
+    return is_negative ? -transformed_val : transformed_val;
 }
 
 int main() {
-    int test_values[] = {
+    std::vector<long long> test_cases = {
         0,
         1,
-        12,
+        9,
+        10,
         123,
         4567,
         98765,
         -1,
-        -12,
-        -123,
-        20202,
-        1999999999, // Near INT_MAX
-        -2147483648 // INT_MIN
+        -10,
+        -543,
+        -999999999999999999LL,
+        123456789012345LL
     };
 
-    for (int val : test_values) {
+    for (long long val : test_cases) {
         std::cout << val << " -> " << logic(val) << std::endl;
     }
 
