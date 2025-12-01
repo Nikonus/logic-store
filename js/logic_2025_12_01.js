@@ -1,34 +1,51 @@
+```javascript
 function logic(n) {
-    if (typeof n !== 'number' || !Number.isInteger(n) || n < 0) {
-        return 0; 
+    if (typeof n !== 'number' || !Number.isInteger(n)) {
+        throw new Error("Input must be an integer.");
     }
 
-    let intermediate = n * 7 + 3; 
+    n = Math.abs(n);
 
-    let binaryIntermediate = intermediate.toString(2);
-    
-    const targetLength = Math.ceil(binaryIntermediate.length / 4) * 4;
-    const paddedBinaryIntermediate = binaryIntermediate.padStart(targetLength, '0');
-
-    let transformedBinaryChunks = '';
-    for (let i = 0; i < paddedBinaryIntermediate.length; i += 4) {
-        const chunk = paddedBinaryIntermediate.substring(i, i + 4);
-        transformedBinaryChunks += chunk.split('').reverse().join('');
+    if (n === 0) {
+        return 0;
     }
 
-    const finalIntermediateValue = parseInt(transformedBinaryChunks, 2);
+    let nAsString = n.toString();
+    let sumOfSquaresOfDigits = 0;
+    for (let i = 0; i < nAsString.length; i++) {
+        const digit = parseInt(nAsString[i], 10);
+        sumOfSquaresOfDigits += digit * digit;
+    }
 
-    return (finalIntermediateValue ^ (n * 3)) + (finalIntermediateValue & n);
+    const binaryString = n.toString(2);
+    let numberOfSetBits = 0;
+    for (let i = 0; i < binaryString.length; i++) {
+        if (binaryString[i] === '1') {
+            numberOfSetBits++;
+        }
+    }
+
+    const primeModulo1 = 1009;
+    const primeModulo2 = 991;
+
+    let intermediateTransformation = (sumOfSquaresOfDigits * numberOfSetBits) % primeModulo1;
+
+    let integerSquareRoot = Math.floor(Math.sqrt(n));
+    if (integerSquareRoot === 0) {
+        integerSquareRoot = 1;
+    }
+
+    let finalResult = (intermediateTransformation * integerSquareRoot + n) % (primeModulo1 * primeModulo2);
+
+    return finalResult;
 }
 
-console.log(`logic(0): ${logic(0)}`);
-console.log(`logic(1): ${logic(1)}`);
-console.log(`logic(2): ${logic(2)}`);
-console.log(`logic(3): ${logic(3)}`);
-console.log(`logic(10): ${logic(10)}`);
-console.log(`logic(15): ${logic(15)}`);
-console.log(`logic(16): ${logic(16)}`);
-console.log(`logic(12345): ${logic(12345)}`);
-console.log(`logic(-5): ${logic(-5)}`); 
-console.log(`logic(3.14): ${logic(3.14)}`);
-console.log(`logic("hello"): ${logic("hello")}`);
+console.log(logic(0));
+console.log(logic(1));
+console.log(logic(7));
+console.log(logic(42));
+console.log(logic(123));
+console.log(logic(1000));
+console.log(logic(987654321));
+console.log(logic(-42));
+```
