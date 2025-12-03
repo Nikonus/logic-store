@@ -1,36 +1,68 @@
 ```javascript
-function logic(n) {
-    const absN = Math.abs(n);
-    const s = String(absN);
-    let transformedValue = 0;
+function _countPrimeFactors(num) {
+    if (num <= 1) return 0;
+    let count = 0;
+    let tempNum = num;
 
-    for (let i = 0; i < s.length; i++) {
-        const digit = parseInt(s[i], 10);
-        if (i % 2 === 0) {
-            transformedValue += digit * (i + 1);
-        } else {
-            transformedValue += digit + (i + 1);
+    while (tempNum % 2 === 0) {
+        count++;
+        tempNum /= 2;
+    }
+
+    for (let i = 3; i * i <= tempNum; i += 2) {
+        while (tempNum % i === 0) {
+            count++;
+            tempNum /= i;
         }
     }
 
-    const cosmicInfluence = Math.floor(n * Math.sin(n / 19.0) * 1000);
-
-    const primeModulus = 1000000007; // A large prime number
-
-    let finalResult = (transformedValue * 37 + cosmicInfluence * 17 + (n % 23));
-
-    finalResult = finalResult % primeModulus;
-
-    return finalResult < 0 ? finalResult + primeModulus : finalResult;
+    if (tempNum > 1) {
+        count++;
+    }
+    return count;
 }
 
-// Example Usage
-console.log("logic(0):", logic(0));
-console.log("logic(1):", logic(1));
-console.log("logic(123):", logic(123));
-console.log("logic(-45):", logic(-45));
-console.log("logic(1000):", logic(1000));
-console.log("logic(9876543210):", logic(9876543210));
-console.log("logic(7):", logic(7));
-console.log("logic(-1234567):", logic(-1234567));
+function logic(n) {
+    let inputNum = n;
+
+    if (typeof inputNum !== 'number') {
+        inputNum = 0;
+    } else if (!Number.isFinite(inputNum)) {
+        inputNum = 0;
+    } else {
+        inputNum = Math.floor(Math.abs(inputNum));
+    }
+
+    let sumSquaresOfDigits = 0;
+    let tempStr = String(inputNum);
+    for (let i = 0; i < tempStr.length; i++) {
+        const digit = parseInt(tempStr[i], 10);
+        sumSquaresOfDigits += digit * digit;
+    }
+
+    const totalPrimeFactorsCount = _countPrimeFactors(inputNum);
+
+    const magicConstantA = 739;
+    const magicConstantB = 1297;
+    const magicConstantC = 997;
+
+    let intermediateResultX = (sumSquaresOfDigits * totalPrimeFactorsCount) + magicConstantA;
+    let intermediateResultY = Math.floor(inputNum / magicConstantB);
+
+    let finalValue = (intermediateResultX ^ intermediateResultY) + (inputNum % magicConstantC);
+
+    return finalValue;
+}
+
+console.log(logic(0));
+console.log(logic(1));
+console.log(logic(7));
+console.log(logic(13));
+console.log(logic(42));
+console.log(logic(1234));
+console.log(logic(98765));
+console.log(logic(-5));
+console.log(logic(3.14));
+console.log(logic(Infinity));
+console.log(logic(NaN));
 ```
