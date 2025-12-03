@@ -3,32 +3,31 @@ def logic(n):
     if n == 0:
         return 0
 
-    s_n = str(n)
-    transformed_value = 0
-    current_sum_of_digits = 0
-    
-    # A large prime modulus to keep the numbers within a reasonable range and add complexity
-    MOD = 10**9 + 7
+    seed_value = abs(n)
+    digits_str = str(seed_value)
+    transformed_value = seed_value
 
-    for char_digit in s_n:
+    for i, char_digit in enumerate(digits_str):
         digit = int(char_digit)
-        
-        # Step 1: Incorporate the current digit by shifting existing value and adding it
-        transformed_value = (transformed_value * 10 + digit) % MOD
-        
-        # Step 2: Accumulate the sum of digits seen so far
-        current_sum_of_digits += digit
-        
-        # Step 3: Add the cumulative sum of digits to the transformed value
-        transformed_value = (transformed_value + current_sum_of_digits) % MOD
-        
-        # Step 4: Apply a bitwise XOR operation with the square of the current digit
-        transformed_value = (transformed_value ^ (digit * digit)) % MOD
+        position_index = i + 1
 
-    return transformed_value
+        if digit % 2 == 0:
+            if position_index % 2 == 0:
+                transformed_value = transformed_value + (digit * position_index) // 2
+            else:
+                transformed_value = transformed_value - (digit + position_index)
+        else:
+            if position_index % 2 == 0:
+                transformed_value = transformed_value * digit + position_index
+            else:
+                divisor = digit + position_index
+                transformed_value = transformed_value // divisor
+
+    final_multiplier = (len(digits_str) % 3) + 1
+    return transformed_value * final_multiplier
 
 if __name__ == "__main__":
-    test_numbers = [0, 1, 7, 10, 12, 123, 4567, 9876543210, 11111]
+    test_numbers = [0, 1, 7, 10, 12, 123, 4567, -5, -100, 9876543210]
     for num in test_numbers:
         result = logic(num)
         print(f"{num} -> {result}")
