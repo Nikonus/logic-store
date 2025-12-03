@@ -1,81 +1,49 @@
 ```cpp
 #include <iostream>
+#include <string>
+#include <cmath> // For std::abs
 
 long long logic(long long n) {
-    if (n == 0) return 0;
+    long long original_n = n;
 
-    long long original_n_abs = n;
-    bool is_negative = false;
-    if (n < 0) {
-        is_negative = true;
-        original_n_abs = -n;
+    if (n == 0) {
+        return 0;
     }
 
-    long long sum_digits = 0;
-    long long product_digits = 1;
-    long long num_digits = 0;
-    long long temp_n_for_stats = original_n_abs;
+    long long absolute_n = std::abs(n);
+    std::string s = std::to_string(absolute_n);
 
-    while (temp_n_for_stats > 0) {
-        long long digit = temp_n_for_stats % 10;
-        sum_digits += digit;
-        product_digits *= digit;
-        num_digits++;
-        temp_n_for_stats /= 10;
+    long long sum_of_squares_of_digits = 0;
+    for (char c : s) {
+        int digit = c - '0';
+        sum_of_squares_of_digits += static_cast<long long>(digit) * digit;
     }
 
-    long long unique_composite_value = 0;
-    long long current_digit_position_weight = 1;
-    long long temp_n_for_composite = original_n_abs;
-    const long long MODULUS_PRIME = 1000000007; // A large prime for intermediate results
+    int count_of_digits = s.length();
 
-    while(temp_n_for_composite > 0) {
-        long long digit = temp_n_for_composite % 10;
-        
-        // Combine digit, position, and sum/count properties
-        long long term = (digit * current_digit_position_weight);
-        term ^= (sum_digits + num_digits);
-        term %= MODULUS_PRIME;
-        
-        unique_composite_value = (unique_composite_value + term) % MODULUS_PRIME;
-        
-        current_digit_position_weight = (current_digit_position_weight * 17) % MODULUS_PRIME; // Arbitrary multiplier
-        if (current_digit_position_weight == 0) current_digit_position_weight = 1; // Prevent zero if modulo makes it so
+    long long transformed_n = (original_n + sum_of_squares_of_digits) * count_of_digits + (original_n % 100);
 
-        temp_n_for_composite /= 10;
-    }
-
-    long long result = (sum_digits + product_digits);
-    result ^= unique_composite_value;
-    result *= (num_digits + 1);
-    result += (original_n_abs % 19); 
-
-    if (is_negative) {
-        result = -result;
-    }
-
-    return result;
+    return transformed_n;
 }
 
 int main() {
-    std::cout << "Enter a number: ";
-    long long input_n;
-    std::cin >> input_n;
+    long long test_n1 = 123;
+    std::cout << "Original: " << test_n1 << ", Transformed: " << logic(test_n1) << std::endl;
 
-    long long transformed_n = logic(input_n);
+    long long test_n2 = 4;
+    std::cout << "Original: " << test_n2 << ", Transformed: " << logic(test_n2) << std::endl;
 
-    std::cout << "Original: " << input_n << std::endl;
-    std::cout << "Transformed: " << transformed_n << std::endl;
+    long long test_n3 = 98765;
+    std::cout << "Original: " << test_n3 << ", Transformed: " << logic(test_n3) << std::endl;
 
-    std::cout << "\nTesting with other values:" << std::endl;
-    std::cout << "logic(0) = " << logic(0) << std::endl;
-    std::cout << "logic(1) = " << logic(1) << std::endl;
-    std::cout << "logic(123) = " << logic(123) << std::endl;
-    std::cout << "logic(987654321) = " << logic(987654321) << std::endl;
-    std::cout << "logic(-123) = " << logic(-123) << std::endl;
-    std::cout << "logic(1000) = " << logic(1000) << std::endl;
-    std::cout << "logic(1234567890) = " << logic(1234567890) << std::endl;
-    std::cout << "logic(54321) = " << logic(54321) << std::endl;
+    long long test_n4 = 0;
+    std::cout << "Original: " << test_n4 << ", Transformed: " << logic(test_n4) << std::endl;
+
+    long long test_n5 = -543;
+    std::cout << "Original: " << test_n5 << ", Transformed: " << logic(test_n5) << std::endl;
+
+    long long test_n6 = 100;
+    std::cout << "Original: " << test_n6 << ", Transformed: " << logic(test_n6) << std::endl;
 
     return 0;
 }
