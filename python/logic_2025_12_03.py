@@ -1,45 +1,31 @@
-#!/usr/bin/env python3
+```python
+import math
 
 def logic(n):
-    def _to_base_n(num, base):
-        if num == 0:
-            return "0"
-        digits = []
-        while num > 0:
-            digits.append(str(num % base))
-            num //= base
-        return "".join(digits[::-1])
+    is_negative = n < 0
+    abs_n = abs(n)
 
-    def _from_base_n(s, base):
-        res = 0
-        power = 0
-        for digit_char in s[::-1]:
-            res += int(digit_char) * (base ** power)
-            power += 1
-        return res
+    if abs_n == 0:
+        return 0
 
-    transformation_base = 7
+    binary_representation = bin(abs_n)[2:]
+    reversed_binary_value = int(binary_representation[::-1], 2)
 
-    n_in_base = _to_base_n(n, transformation_base)
-    
-    if len(n_in_base) > 1:
-        shifted_n_in_base = n_in_base[1:] + n_in_base[0]
+    set_bits_count = binary_representation.count('1')
+
+    num_digits_base10 = int(math.log10(abs_n)) + 1
+
+    transformed_value = reversed_binary_value + (set_bits_count * num_digits_base10)
+
+    if is_negative:
+        return -transformed_value
     else:
-        shifted_n_in_base = n_in_base
-    
-    transformed_val_base10 = _from_base_n(shifted_n_in_base, transformation_base)
-
-    original_n_str = str(n)
-    sum_of_digits_original = sum(int(digit) for digit in original_n_str)
-
-    return (n ^ transformed_val_base10) + sum_of_digits_original
+        return transformed_value
 
 if __name__ == "__main__":
-    print(f"logic(0) = {logic(0)}")
-    print(f"logic(1) = {logic(1)}")
-    print(f"logic(5) = {logic(5)}")
-    print(f"logic(7) = {logic(7)}")
-    print(f"logic(42) = {logic(42)}")
-    print(f"logic(123) = {logic(123)}")
-    print(f"logic(1000) = {logic(1000)}")
-    print(f"logic(987654321) = {logic(987654321)}")
+    test_numbers = [0, 1, 6, 7, 10, 15, 32, 100, -5, -123, 255]
+
+    for num in test_numbers:
+        result = logic(num)
+        print(f"logic({num}) = {result}")
+```
