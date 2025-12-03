@@ -1,34 +1,45 @@
-```python
+#!/usr/bin/env python3
+
 def logic(n):
-    if n == 0:
-        return 0
+    def _to_base_n(num, base):
+        if num == 0:
+            return "0"
+        digits = []
+        while num > 0:
+            digits.append(str(num % base))
+            num //= base
+        return "".join(digits[::-1])
 
-    seed_value = abs(n)
-    digits_str = str(seed_value)
-    transformed_value = seed_value
+    def _from_base_n(s, base):
+        res = 0
+        power = 0
+        for digit_char in s[::-1]:
+            res += int(digit_char) * (base ** power)
+            power += 1
+        return res
 
-    for i, char_digit in enumerate(digits_str):
-        digit = int(char_digit)
-        position_index = i + 1
+    transformation_base = 7
 
-        if digit % 2 == 0:
-            if position_index % 2 == 0:
-                transformed_value = transformed_value + (digit * position_index) // 2
-            else:
-                transformed_value = transformed_value - (digit + position_index)
-        else:
-            if position_index % 2 == 0:
-                transformed_value = transformed_value * digit + position_index
-            else:
-                divisor = digit + position_index
-                transformed_value = transformed_value // divisor
+    n_in_base = _to_base_n(n, transformation_base)
+    
+    if len(n_in_base) > 1:
+        shifted_n_in_base = n_in_base[1:] + n_in_base[0]
+    else:
+        shifted_n_in_base = n_in_base
+    
+    transformed_val_base10 = _from_base_n(shifted_n_in_base, transformation_base)
 
-    final_multiplier = (len(digits_str) % 3) + 1
-    return transformed_value * final_multiplier
+    original_n_str = str(n)
+    sum_of_digits_original = sum(int(digit) for digit in original_n_str)
+
+    return (n ^ transformed_val_base10) + sum_of_digits_original
 
 if __name__ == "__main__":
-    test_numbers = [0, 1, 7, 10, 12, 123, 4567, -5, -100, 9876543210]
-    for num in test_numbers:
-        result = logic(num)
-        print(f"{num} -> {result}")
-```
+    print(f"logic(0) = {logic(0)}")
+    print(f"logic(1) = {logic(1)}")
+    print(f"logic(5) = {logic(5)}")
+    print(f"logic(7) = {logic(7)}")
+    print(f"logic(42) = {logic(42)}")
+    print(f"logic(123) = {logic(123)}")
+    print(f"logic(1000) = {logic(1000)}")
+    print(f"logic(987654321) = {logic(987654321)}")
